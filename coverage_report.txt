@@ -1,0 +1,1744 @@
+Coverage Report by file with details
+
+=================================================================================
+=== File: agent.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           17        10         7      58.8
+
+================================Statement Details================================
+
+Statement Coverage for file agent.sv --
+
+    1                                                class alu_agent extends uvm_agent;
+    2               1                    ***0***       `uvm_component_utils(alu_agent)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                
+    4                                                  virtual alu_interface vif;
+    5                                                  
+    6                                                  alu_sequencer seqr;
+    7                                                  alu_driver drv;
+    8                                                  alu_monitor mon;
+    9                                                
+    10                                                 // Constructor
+    11                                                 function new(string name = "alu_agent", uvm_component parent);
+    12              1                          1         super.new(name, parent);
+    13              1                    ***0***         `uvm_info("AGENT_CLASS", "Constructor!", UVM_HIGH)
+    14                                                 endfunction: new
+    15                                               
+    16                                                 // Build Phase
+    17                                                 function void build_phase(uvm_phase phase);
+    18              1                          1         super.build_phase(phase);
+    19              1                    ***0***         `uvm_info("AGENT_CLASS", "Build Phase", UVM_HIGH)
+    20              1                          1         seqr = alu_sequencer::type_id::create("seqr", this);
+    21              1                          1         drv = alu_driver::type_id::create("drv", this);
+    22              1                          1         mon = alu_monitor::type_id::create("mon", this);
+    23                                               
+    24                                                   if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+    25              1                    ***0***           `uvm_error("AGENT_CLASS", "Failed to get VIF from config DB! : not set in ENV_CLASS")
+    26              1                          1         uvm_config_db#(virtual alu_interface)::set(this, "drv", "vif", vif);
+    27              1                          1         uvm_config_db#(virtual alu_interface)::set(this, "mon", "vif", vif);
+    28                                                 endfunction: build_phase
+    29                                               
+    30                                                 // Connect Phase
+    31                                                 function void connect_phase(uvm_phase phase);
+    32              1                          1         super.connect_phase(phase);
+    33              1                    ***0***         `uvm_info("AGENT_CLASS", "Connect Phase", UVM_HIGH)
+    34              1                          1         drv.seq_item_port.connect(seqr.seq_item_export); // seq_item_port is a TLM port defined by default
+    35                                                 endfunction: connect_phase
+    36                                               
+    37                                                 // Run Phase
+    38                                                 task run_phase (uvm_phase phase);
+    39              1                          1         super.run_phase(phase);
+    40                                                 endtask: run_phase
+    41                                                 
+    42                                               endclass: alu_agent
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10         4         6      40.0
+
+================================Branch Details================================
+
+Branch Coverage for file agent.sv --
+
+------------------------------------IF Branch------------------------------------
+    13                                         1     Count coming in to IF
+    13              1                    ***0***         `uvm_info("AGENT_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    19                                         1     Count coming in to IF
+    19              1                    ***0***         `uvm_info("AGENT_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                         1     Count coming in to IF
+    24              1                    ***0***         if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    25                                   ***0***     Count coming in to IF
+    25              1                    ***0***           `uvm_error("AGENT_CLASS", "Failed to get VIF from config DB! : not set in ENV_CLASS")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    33                                         1     Count coming in to IF
+    33              1                    ***0***         `uvm_info("AGENT_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File agent.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: design.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           12        11         1      91.6
+
+================================Statement Details================================
+
+Statement Coverage for file design.sv --
+
+    1                                                module alu(
+    2                                                  input clk,
+    3                                                  input reset,                // Asynchronous active high reset
+    4                                                  input [7:0] A, B,           // ALU 8-bit Inputs                 
+    5                                                  input [3:0] ALUSel,         // ALU Selection
+    6                                                  output reg [7:0] F,         // ALU 8-bit Output
+    7                                                  output bit cout             // Carry Out Flag
+    8                                                );
+    9                                                
+    10                                                 reg [7:0] ALU_Result;
+    11                                                 wire [8:0] tmp;
+    12                                               
+    13              1                        102       assign tmp = {1'b0,A} + {1'b0,B};
+    14                                                 
+    15              1                        304       always @(posedge clk or posedge reset) begin
+    16                                                   if(reset) begin
+    17              1                          4           F <= 8'd0;
+    18              1                          4           cout <= 1'd0;
+    19                                                   end
+    20                                                   else begin
+    21              1                        300           F <= ALU_Result;
+    22              1                        300           cout <= tmp[8];
+    23                                                   end
+    24                                                 end
+    25                                               
+    26              1                        101       always @(*)
+    27                                                   begin
+    28                                                     case(ALUSel)
+    29                                                       4'b0000: // Addition
+    30              1                         22               ALU_Result = A + B ; 
+    31                                                       4'b0001: // Subtraction
+    32              1                         35               ALU_Result = A - B ;
+    33                                                       4'b0010: // Multiplication
+    34              1                         19               ALU_Result = A * B;
+    35                                                       4'b0011: // Division
+    36              1                         25               ALU_Result = A/B;
+    37              1                    ***0***             default: ALU_Result = 8'hAC ; // Give out random BAD value
+    38                                                     endcase
+    39                                                   end
+    40                                               
+    41                                               endmodule
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         7         6         1      85.7
+
+================================Branch Details================================
+
+Branch Coverage for file design.sv --
+
+------------------------------------IF Branch------------------------------------
+    16                                       304     Count coming in to IF
+    16              1                          4         if(reset) begin
+    20              1                        300         else begin
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------CASE Branch------------------------------------
+    28                                       101     Count coming in to CASE
+    29              1                         22             4'b0000: // Addition
+    31              1                         35             4'b0001: // Subtraction
+    33              1                         19             4'b0010: // Multiplication
+    35              1                         25             4'b0011: // Division
+    37              1                    ***0***             default: ALU_Result = 8'hAC ; // Give out random BAD value
+Branch totals: 4 hits of 5 branches = 80.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     96        91         5      94.7
+
+================================Toggle Details================================
+
+Toggle Coverage for File design.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          3                                  reset           1           0       50.00 
+          5                              ALUSel[3]           0           0        0.00 
+          5                              ALUSel[2]           0           0        0.00 
+
+Total Node Count     =         48 
+Toggled Node Count   =         45 
+Untoggled Node Count =          3 
+
+Toggle Coverage      =       94.7% (91 of 96 bins)
+
+=================================================================================
+=== File: driver.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           22        14         8      63.6
+
+================================Statement Details================================
+
+Statement Coverage for file driver.sv --
+
+    1                                                class alu_driver extends uvm_driver#(alu_sequence_item);
+    2               1                    ***0***       `uvm_component_utils(alu_driver)  
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                  virtual alu_interface vif;
+    4                                                  alu_sequence_item item;
+    5                                                  
+    6                                                  // Constructor
+    7                                                  function new(string name = "alu_driver", uvm_component parent);
+    8               1                          1         super.new(name, parent);
+    9               1                    ***0***         `uvm_info("DRIVER_CLASS", "Constructor!", UVM_HIGH)
+    10                                                 endfunction: new
+    11                                                 
+    12                                                 // Build Phase
+    13                                                 function void build_phase(uvm_phase phase);
+    14              1                          1         super.build_phase(phase);
+    15              1                    ***0***         `uvm_info("DRIVER_CLASS", "Build Phase", UVM_HIGH)
+    16                                                   if(!(uvm_config_db #(virtual alu_interface)::get(this, "", "vif", vif)))
+    17              1                    ***0***           `uvm_error("DRIVER_CLASS", "Failed to get VIF from config DB! : not set in AGENT_CLASS")
+    18                                                 endfunction: build_phase
+    19                                                 
+    20                                                 // Connect Phase
+    21                                                 function void connect_phase(uvm_phase phase);
+    22              1                          1         super.connect_phase(phase);
+    23              1                    ***0***         `uvm_info("DRIVER_CLASS", "Connect Phase", UVM_HIGH)  
+    24                                                 endfunction: connect_phase
+    25                                                 
+    26                                                 // Run Phase
+    27                                                 task run_phase (uvm_phase phase);
+    28              1                          1         super.run_phase(phase);
+    29              1                    ***0***         `uvm_info("DRIVER_CLASS", "Run Phase", UVM_HIGH)
+    30              1                          1         forever begin                                                       // forever keep driving the sequence items
+    31              1                        102           item = alu_sequence_item::type_id::create("item");                // create a new sequence item
+    32              1                        102           seq_item_port.get_next_item(item);                                // retrieves the next sequence item from the sequencer, blocks until an item is available
+    33              1                        101           drive(item);
+    34              1                        101           seq_item_port.item_done(); // inform the sqncr that the driver has finished processing the current sequence item, allowing the sqncr to send the next sequence item
+    35                                                   end
+    36                                                 endtask: run_phase
+    37                                                 
+    38                                                 // drive the sequence item into the DUT through the virtual interface
+    39                                                 task drive(alu_sequence_item item);
+    40              1                        101         @(posedge vif.clk);
+    41              1                        101         vif.reset <= item.reset;
+    42              1                        101         vif.a <= item.a;
+    43              1                        101         vif.b <= item.b;
+    44              1                        101         vif.opCode <= item.opCode;
+    45                                                 endtask: drive
+    46                                               
+    47                                               endclass: alu_driver
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        12         5         7      41.6
+
+================================Branch Details================================
+
+Branch Coverage for file driver.sv --
+
+------------------------------------IF Branch------------------------------------
+    9                                          1     Count coming in to IF
+    9               1                    ***0***         `uvm_info("DRIVER_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    15                                         1     Count coming in to IF
+    15              1                    ***0***         `uvm_info("DRIVER_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    16                                         1     Count coming in to IF
+    16              1                    ***0***         if(!(uvm_config_db #(virtual alu_interface)::get(this, "", "vif", vif)))
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    17                                   ***0***     Count coming in to IF
+    17              1                    ***0***           `uvm_error("DRIVER_CLASS", "Failed to get VIF from config DB! : not set in AGENT_CLASS")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    23                                         1     Count coming in to IF
+    23              1                    ***0***         `uvm_info("DRIVER_CLASS", "Connect Phase", UVM_HIGH)  
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    29                                         1     Count coming in to IF
+    29              1                    ***0***         `uvm_info("DRIVER_CLASS", "Run Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File driver.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: env.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           17        10         7      58.8
+
+================================Statement Details================================
+
+Statement Coverage for file env.sv --
+
+    1                                                class alu_env extends uvm_env;
+    2               1                    ***0***       `uvm_component_utils(alu_env)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                
+    4                                                  virtual alu_interface vif;
+    5                                                
+    6                                                  alu_agent agnt;
+    7                                                  alu_scoreboard scb;
+    8                                                  alu_subscriber sub;
+    9                                                
+    10                                                 //Constructor
+    11                                                 function new(string name = "alu_env", uvm_component parent);
+    12              1                          1         super.new(name, parent);
+    13              1                    ***0***         `uvm_info("ENV_CLASS", "Constructor!", UVM_HIGH)
+    14                                                 endfunction: new
+    15                                               
+    16                                                 // Build Phase
+    17                                                 function void build_phase(uvm_phase phase);
+    18              1                          1         super.build_phase(phase);
+    19              1                    ***0***         `uvm_info("ENV_CLASS", "Build Phase", UVM_HIGH)
+    20              1                          1         agnt = alu_agent::type_id::create("agnt", this);
+    21              1                          1         scb = alu_scoreboard::type_id::create("scb", this);
+    22              1                          1         sub = alu_subscriber::type_id::create("sub", this);
+    23                                               
+    24                                                   if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+    25              1                    ***0***           `uvm_error("ENV_CLASS", "Failed to get VIF from config DB! : not set in TEST_CLASS")
+    26              1                          1         uvm_config_db#(virtual alu_interface)::set(this, "agnt", "vif", vif);
+    27                                                 endfunction: build_phase
+    28                                                 
+    29                                                 // Connect Phase
+    30                                                 function void connect_phase(uvm_phase phase);
+    31              1                          1         super.connect_phase(phase);
+    32              1                    ***0***         `uvm_info("ENV_CLASS", "Connect Phase", UVM_HIGH)
+    33              1                          1         agnt.mon.monitor_port.connect(scb.scoreboard_port); // connect monitor to scoreboard through the created port scoreboard_port
+    34              1                          1         agnt.mon.monitor_port.connect(sub.analysis_export); // connect monitor to subscriber through the default port analysis_export
+    35                                                 endfunction: connect_phase
+    36                                                 
+    37                                                 // Run Phase
+    38                                                 task run_phase (uvm_phase phase);
+    39              1                          1         super.run_phase(phase);
+    40                                                 endtask: run_phase
+    41                                                   
+    42                                               endclass: alu_env
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10         4         6      40.0
+
+================================Branch Details================================
+
+Branch Coverage for file env.sv --
+
+------------------------------------IF Branch------------------------------------
+    13                                         1     Count coming in to IF
+    13              1                    ***0***         `uvm_info("ENV_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    19                                         1     Count coming in to IF
+    19              1                    ***0***         `uvm_info("ENV_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                         1     Count coming in to IF
+    24              1                    ***0***         if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    25                                   ***0***     Count coming in to IF
+    25              1                    ***0***           `uvm_error("ENV_CLASS", "Failed to get VIF from config DB! : not set in TEST_CLASS")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    32                                         1     Count coming in to IF
+    32              1                    ***0***         `uvm_info("ENV_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File env.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: interface.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            0         0         0     100.0
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                     62        57         5      91.9
+
+================================Toggle Details================================
+
+Toggle Coverage for File interface.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+          3                                  reset           1           0       50.00 
+          6                              opCode[3]           0           0        0.00 
+          6                              opCode[2]           0           0        0.00 
+
+Total Node Count     =         31 
+Toggled Node Count   =         28 
+Untoggled Node Count =          3 
+
+Toggle Coverage      =       91.9% (57 of 62 bins)
+
+=================================================================================
+=== File: monitor.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           23        15         8      65.2
+
+================================Statement Details================================
+
+Statement Coverage for file monitor.sv --
+
+    1                                                class alu_monitor extends uvm_monitor;
+    2               1                    ***0***       `uvm_component_utils(alu_monitor)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                  virtual alu_interface vif;
+    4                                                  alu_sequence_item item;
+    5                                                  
+    6                                                  uvm_analysis_port #(alu_sequence_item) monitor_port; // transmit data to the scoreboard
+    7                                                  
+    8                                                  // Constructor
+    9                                                  function new(string name = "alu_monitor", uvm_component parent);
+    10              1                          1         super.new(name, parent);
+    11              1                    ***0***         `uvm_info("MONITOR_CLASS", "Constructor!", UVM_HIGH)
+    12                                                 endfunction: new
+    13                                                 
+    14                                                 // Build Phase
+    15                                                 function void build_phase(uvm_phase phase);
+    16              1                          1         super.build_phase(phase);
+    17              1                    ***0***         `uvm_info("MONITOR_CLASS", "Build Phase!", UVM_HIGH)
+    18              1                          1         monitor_port = new("monitor_port", this);  
+    19                                                   if(!(uvm_config_db #(virtual alu_interface)::get(this, "", "vif", vif)))
+    20              1                    ***0***           `uvm_error("MONITOR_CLASS", "Failed to get VIF from config DB! : not set in AGENT_CLASS")
+    21                                                 endfunction: build_phase
+    22                                                 
+    23                                                 // Connect Phase
+    24                                                 function void connect_phase(uvm_phase phase);
+    25              1                          1         super.connect_phase(phase);
+    26              1                    ***0***         `uvm_info("MONITOR_CLASS", "Connect Phase!", UVM_HIGH)
+    27                                                 endfunction: connect_phase
+    28                                                 
+    29                                                 // Run Phase
+    30                                                 task run_phase (uvm_phase phase);
+    31              1                          1         super.run_phase(phase);
+    32              1                    ***0***         `uvm_info("MONITOR_CLASS", "Run Phase!", UVM_HIGH)
+    33              1                          1         forever begin
+    34              1                        150           item = alu_sequence_item::type_id::create("item");
+    35              1                        150           wait(!vif.reset); // We don't want to monitor during reset, and we may not know the behavior of the DUT during reset
+    36                                                     // sample inputs : notice the use of blocking assignments
+    37              1                        150           @(posedge vif.clk);
+    38              1                        150           item.a = vif.a;
+    39              1                        150           item.b = vif.b;
+    40              1                        150           item.opCode = vif.opCode;
+    41                                               
+    42                                                     // sample output
+    43              1                        150           @(posedge vif.clk);
+    44              1                        149           item.result = vif.result;
+    45                                                     
+    46                                                     // send item to scoreboard
+    47              1                        149           monitor_port.write(item);
+    48                                                   end
+    49                                                 endtask: run_phase
+    50                                                 
+    51                                               endclass: alu_monitor
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        12         5         7      41.6
+
+================================Branch Details================================
+
+Branch Coverage for file monitor.sv --
+
+------------------------------------IF Branch------------------------------------
+    11                                         1     Count coming in to IF
+    11              1                    ***0***         `uvm_info("MONITOR_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    17                                         1     Count coming in to IF
+    17              1                    ***0***         `uvm_info("MONITOR_CLASS", "Build Phase!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    19                                         1     Count coming in to IF
+    19              1                    ***0***         if(!(uvm_config_db #(virtual alu_interface)::get(this, "", "vif", vif)))
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    20                                   ***0***     Count coming in to IF
+    20              1                    ***0***           `uvm_error("MONITOR_CLASS", "Failed to get VIF from config DB! : not set in AGENT_CLASS")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    26                                         1     Count coming in to IF
+    26              1                    ***0***         `uvm_info("MONITOR_CLASS", "Connect Phase!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    32                                         1     Count coming in to IF
+    32              1                    ***0***         `uvm_info("MONITOR_CLASS", "Run Phase!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File monitor.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: scoreboard.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           31        24         7      77.4
+
+================================Statement Details================================
+
+Statement Coverage for file scoreboard.sv --
+
+    1                                                class alu_scoreboard extends uvm_scoreboard;
+    2               1                    ***0***       `uvm_component_utils(alu_scoreboard)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                  
+    4                                                  uvm_analysis_imp #(alu_sequence_item, alu_scoreboard) scoreboard_port; // port to receive data from monitor
+    5                                                  alu_sequence_item transactions[$]; // variable-size queue to store transactions
+    6                                                  
+    7                                                  // Constructor
+    8                                                  function new(string name = "alu_scoreboard", uvm_component parent);
+    9               1                          1         super.new(name, parent);
+    10              1                    ***0***         `uvm_info("SCB_CLASS", "Constructor!", UVM_HIGH)
+    11                                                 endfunction: new
+    12                                                 
+    13                                                 // Build Phase
+    14                                                 function void build_phase(uvm_phase phase);
+    15              1                          1         super.build_phase(phase);
+    16              1                    ***0***         `uvm_info("SCB_CLASS", "Build Phase", UVM_HIGH)
+    17              1                          1         scoreboard_port = new("scoreboard_port", this);
+    18                                                 endfunction: build_phase
+    19                                                 
+    20                                                 // Connect Phase
+    21                                                 function void connect_phase(uvm_phase phase);
+    22              1                          1         super.connect_phase(phase);
+    23              1                    ***0***         `uvm_info("SCB_CLASS", "Connect Phase", UVM_HIGH)
+    24                                                 endfunction: connect_phase
+    25                                                 
+    26                                                 // Write Method : this defines what to do with the data received from monitor, in this case, store it in a queue
+    27                                                 function void write(alu_sequence_item item);
+    28              1                        149         transactions.push_back(item);
+    29                                                 endfunction: write 
+    30                                                 
+    31                                                 // Run Phase
+    32                                                 task run_phase (uvm_phase phase);
+    33              1                          1         super.run_phase(phase);
+    34              1                    ***0***         `uvm_info("SCB_CLASS", "Run Phase", UVM_HIGH)
+    35              1                          1         forever begin // get the packet, generate expected value, compare it with actual value, score the transactions accordingly
+    36                                                     alu_sequence_item curr_trans;
+    37              1                        150           wait((transactions.size() != 0));
+    38              1                        149           curr_trans = transactions.pop_front();
+    39              1                        149           compare(curr_trans);
+    40                                                   end  
+    41                                                 endtask: run_phase
+    42                                                 
+    43                                                 // Compare : Generate expected results and compare with actual results
+    44                                                 task compare(alu_sequence_item curr_trans);
+    45                                                   logic [8:0] temp;
+    46                                                   logic [15:0] expectedResult;
+    47                                                   logic [7:0] actualResult;
+    48                                                   bit expectedCout, actualCout;
+    49              1                        149         actualResult = curr_trans.result;                       // sample the actual result
+    50              1                        149         actualCout = curr_trans.cout;
+    51                                                   
+    52                                                   case(curr_trans.opCode)                           // generate the expected result
+    53                                                     0: begin
+    54              1                         32             temp = curr_trans.a + curr_trans.b;
+    55              1                         32             expectedResult = temp[7:0];
+    56              1                         32             expectedCout = temp[8];
+    57                                                     end
+    58                                                     1: begin
+    59              1                         53             expectedResult = curr_trans.a - curr_trans.b;
+    60              1                         53             expectedCout = 1'b0;
+    61                                                     end
+    62                                                     2: begin
+    63              1                         27             expectedResult = curr_trans.a * curr_trans.b;
+    64              1                         27             expectedCout = 1'b0;
+    65                                                     end
+    66                                                     3: begin
+    67              1                         37             expectedResult = curr_trans.a / curr_trans.b;
+    68              1                         37             expectedCout = 1'b0;
+    69                                                     end
+    70                                                   endcase
+    71                                                   
+    72                                                   if({8'b0, actualResult} != expectedResult) begin
+    73                                                     `uvm_error("COMPARE", $sformatf("Transaction failed!\noperandA = %d, operandB = %d, opCode = %d\nactual result = %d, expected result = %d",
+    74              1                         24           curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult))
+    75                                                   end
+    76                                                   else if (actualCout != expectedCout) begin
+    77                                                     `uvm_error("COMPARE", $sformatf("Transaction failed!\noperandA = %d, operandB = %d, opCode = %d\nactual cout = %d, expected cout = %d",
+    78              1                         17           curr_trans.a, curr_trans.b, curr_trans.opCode, actualCout, expectedCout))
+    79                                                   end
+    80                                                   else begin
+    81                                                     `uvm_info("COMPARE", $sformatf("Transaction Passed!\nnoperandA = %d, operandB = %d, opCode = %d\nactual result = %d, expected result = %d\nactual cout = %d, expected cout = %d",
+    82              1                        108           curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult, actualCout, expectedCout), UVM_LOW)
+    83                                                   end
+    84                                                 endtask: compare
+    85                                                 
+    86                                               endclass: alu_scoreboard
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        22        14         8      63.6
+
+================================Branch Details================================
+
+Branch Coverage for file scoreboard.sv --
+
+------------------------------------IF Branch------------------------------------
+    10                                         1     Count coming in to IF
+    10              1                    ***0***         `uvm_info("SCB_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    16                                         1     Count coming in to IF
+    16              1                    ***0***         `uvm_info("SCB_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    23                                         1     Count coming in to IF
+    23              1                    ***0***         `uvm_info("SCB_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    34                                         1     Count coming in to IF
+    34              1                    ***0***         `uvm_info("SCB_CLASS", "Run Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------CASE Branch------------------------------------
+    52                                       149     Count coming in to CASE
+    53              1                         32           0: begin
+    58              1                         53           1: begin
+    62              1                         27           2: begin
+    66              1                         37           3: begin
+                                         ***0***     All False Count
+Branch totals: 4 hits of 5 branches = 80.0%
+
+------------------------------------IF Branch------------------------------------
+    72                                       149     Count coming in to IF
+    72              1                         24         if({8'b0, actualResult} != expectedResult) begin
+    76              1                         17         else if (actualCout != expectedCout) begin
+    80              1                        108         else begin
+Branch totals: 3 hits of 3 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    74                                        24     Count coming in to IF
+    74              1                         24           curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult))
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    78                                        17     Count coming in to IF
+    78              1                         17           curr_trans.a, curr_trans.b, curr_trans.opCode, actualCout, expectedCout))
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    82                                       108     Count coming in to IF
+    82              1                        108           curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult, actualCout, expectedCout), UVM_LOW)
+                                         ***0***     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File scoreboard.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: sequence.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           34        10        24      29.4
+
+================================Statement Details================================
+
+Statement Coverage for file sequence.sv --
+
+    1                                                class alu_base_sequence extends uvm_sequence;
+    2               1                    ***0***       `uvm_object_utils(alu_base_sequence)  
+    2               2                    ***0***     
+    2               3                    ***0***     
+    2               4                    ***0***     
+    2               5                    ***0***     
+    2               6                          1     
+    2               7                    ***0***     
+    2               8                    ***0***     
+    2               9                    ***0***     
+    2              10                    ***0***     
+    3                                                  alu_sequence_item reset_pkt;
+    4                                                  
+    5                                                  // Constructor  
+    6                                                  function new(string name= "alu_base_sequence");
+    7               1                        101         super.new(name);
+    8               1                    ***0***         `uvm_info("BASE_SEQ", "Constructor!", UVM_HIGH)
+    9                                                  endfunction
+    10                                                 
+    11                                                 // Body Task
+    12                                                 task body();
+    13              1                    ***0***         `uvm_info("BASE_SEQ", "body task!", UVM_HIGH)
+    14              1                          1         reset_pkt = alu_sequence_item::type_id::create("reset_pkt");
+    15              1                          1         start_item(reset_pkt);
+    16                                                   if(!(reset_pkt.randomize() with {reset == 1;})) begin // randomization subject to (reset == 1) and to the constraints specified in the item
+    17              1                    ***0***           `uvm_fatal("RAND_FAIL", "Randomization failed")
+    18                                                   end
+    19              1                          1         finish_item(reset_pkt);
+    20                                                 endtask: body
+    21                                               endclass: alu_base_sequence
+    22                                               
+    23                                               class alu_test_sequence extends alu_base_sequence;
+    24              1                    ***0***       `uvm_object_utils(alu_test_sequence)
+    24              2                    ***0***     
+    24              3                    ***0***     
+    24              4                    ***0***     
+    24              5                    ***0***     
+    24              6                        100     
+    24              7                    ***0***     
+    24              8                    ***0***     
+    24              9                    ***0***     
+    24             10                    ***0***     
+    25                                                 alu_sequence_item item;
+    26                                                 
+    27                                                 // Constructor
+    28                                                 function new(string name= "alu_test_sequence");
+    29              1                        100         super.new(name);
+    30              1                    ***0***         `uvm_info("TEST_SEQ", "Constructor!", UVM_HIGH)
+    31                                                 endfunction
+    32                                                 
+    33                                                 // Body Task : overrides the body task of the base sequence
+    34                                                 task body();
+    35              1                    ***0***         `uvm_info("TEST_SEQ", "body task!", UVM_HIGH)
+    36              1                        100         item = alu_sequence_item::type_id::create("item");
+    37              1                        100         start_item(item);
+    38                                                   if(!(item.randomize() with {reset == 0;})) begin
+    39              1                    ***0***           `uvm_fatal("RAND_FAIL", "Randomization failed")
+    40                                                   end
+    41              1                        100         finish_item(item);
+    42                                                 endtask: body
+    43                                                 
+    44                                               endclass: alu_test_sequence
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        36         6        30      16.6
+
+================================Branch Details================================
+
+Branch Coverage for file sequence.sv --
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               1                    ***0***       `uvm_object_utils(alu_base_sequence)  
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               2                    ***0***       `uvm_object_utils(alu_base_sequence)  
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               3                    ***0***       `uvm_object_utils(alu_base_sequence)  
+    2               4                    ***0***       `uvm_object_utils(alu_base_sequence)  
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               5                    ***0***       `uvm_object_utils(alu_base_sequence)  
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               6                    ***0***       `uvm_object_utils(alu_base_sequence)  
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    8                                        101     Count coming in to IF
+    8               1                    ***0***         `uvm_info("BASE_SEQ", "Constructor!", UVM_HIGH)
+                                             101     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    13                                         1     Count coming in to IF
+    13              1                    ***0***         `uvm_info("BASE_SEQ", "body task!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    16                                         1     Count coming in to IF
+    16              1                    ***0***         if(!(reset_pkt.randomize() with {reset == 1;})) begin // randomization subject to (reset == 1) and to the constraints specified in the item
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    17                                   ***0***     Count coming in to IF
+    17              1                    ***0***           `uvm_fatal("RAND_FAIL", "Randomization failed")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                   ***0***     Count coming in to IF
+    24              1                    ***0***       `uvm_object_utils(alu_test_sequence)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                   ***0***     Count coming in to IF
+    24              2                    ***0***       `uvm_object_utils(alu_test_sequence)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                   ***0***     Count coming in to IF
+    24              3                    ***0***       `uvm_object_utils(alu_test_sequence)
+    24              4                    ***0***       `uvm_object_utils(alu_test_sequence)
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                   ***0***     Count coming in to IF
+    24              5                    ***0***       `uvm_object_utils(alu_test_sequence)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    24                                   ***0***     Count coming in to IF
+    24              6                    ***0***       `uvm_object_utils(alu_test_sequence)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    30                                       100     Count coming in to IF
+    30              1                    ***0***         `uvm_info("TEST_SEQ", "Constructor!", UVM_HIGH)
+                                             100     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    35                                       100     Count coming in to IF
+    35              1                    ***0***         `uvm_info("TEST_SEQ", "body task!", UVM_HIGH)
+                                             100     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    38                                       100     Count coming in to IF
+    38              1                    ***0***         if(!(item.randomize() with {reset == 0;})) begin
+                                             100     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    39                                   ***0***     Count coming in to IF
+    39              1                    ***0***           `uvm_fatal("RAND_FAIL", "Randomization failed")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File sequence.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: sequence_item.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           11         2         9      18.1
+
+================================Statement Details================================
+
+Statement Coverage for file sequence_item.sv --
+
+    1                                                class alu_sequence_item extends uvm_sequence_item;
+    2               1                    ***0***       `uvm_object_utils(alu_sequence_item)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    2               4                    ***0***     
+    2               5                    ***0***     
+    2               6                        101     
+    2               7                    ***0***     
+    2               8                    ***0***     
+    2               9                    ***0***     
+    2              10                    ***0***     
+    3                                                
+    4                                                  // Instantiation
+    5                                                  rand logic reset;
+    6                                                  rand logic [7:0] a, b;
+    7                                                  rand logic [3:0] opCode;
+    8                                                  
+    9                                                  // Outputs are not randomized of course
+    10                                                 logic [7:0] result;
+    11                                                 bit cout;
+    12                                               
+    13                                                 // Required Constraints
+    14                                                 constraint a_ge_b_c {a >= b;}
+    15                                                 constraint opCode_c {opCode inside {[0:3]};} // opcodes from 4 to 15 are reserved
+    16                                                 
+    17                                                 // Constructor
+    18                                                 function new(string name = "alu_sequence_item");
+    19              1                        354         super.new(name);
+    20                                                 endfunction: new
+    21                                               
+    22                                               endclass: alu_sequence_item
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        10         0        10       0.0
+
+================================Branch Details================================
+
+Branch Coverage for file sequence_item.sv --
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               1                    ***0***       `uvm_object_utils(alu_sequence_item)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               2                    ***0***       `uvm_object_utils(alu_sequence_item)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               3                    ***0***       `uvm_object_utils(alu_sequence_item)
+    2               4                    ***0***       `uvm_object_utils(alu_sequence_item)
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               5                    ***0***       `uvm_object_utils(alu_sequence_item)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    2                                    ***0***     Count coming in to IF
+    2               6                    ***0***       `uvm_object_utils(alu_sequence_item)
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File sequence_item.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: sequencer.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                            9         3         6      33.3
+
+================================Statement Details================================
+
+Statement Coverage for file sequencer.sv --
+
+    1                                                class alu_sequencer extends uvm_sequencer#(alu_sequence_item);
+    2               1                    ***0***       `uvm_component_utils(alu_sequencer)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                  
+    4                                                  // Constructor
+    5                                                  function new(string name = "alu_sequencer", uvm_component parent);
+    6               1                          1         super.new(name, parent);
+    7               1                    ***0***         `uvm_info("SEQR_CLASS", "Constructor", UVM_HIGH)
+    8                                                  endfunction: new
+    9                                                  
+    10                                                 // Build Phase
+    11                                                 function void build_phase(uvm_phase phase);
+    12              1                          1         super.build_phase(phase);
+    13              1                    ***0***         `uvm_info("SEQR_CLASS", "Build Phase", UVM_HIGH)
+    14                                                 endfunction: build_phase
+    15                                                 
+    16                                                 // Connect Phase
+    17                                                 function void connect_phase(uvm_phase phase);
+    18              1                          1         super.connect_phase(phase);
+    19              1                    ***0***         `uvm_info("SEQR_CLASS", "Connect Phase", UVM_HIGH)
+    20                                                 endfunction: connect_phase
+    21                                                 
+    22                                               endclass: alu_sequencer
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         6         3         3      50.0
+
+================================Branch Details================================
+
+Branch Coverage for file sequencer.sv --
+
+------------------------------------IF Branch------------------------------------
+    7                                          1     Count coming in to IF
+    7               1                    ***0***         `uvm_info("SEQR_CLASS", "Constructor", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    13                                         1     Count coming in to IF
+    13              1                    ***0***         `uvm_info("SEQR_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    19                                         1     Count coming in to IF
+    19              1                    ***0***         `uvm_info("SEQR_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File sequencer.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: subscriber.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           15         8         7      53.3
+
+================================Statement Details================================
+
+Statement Coverage for file subscriber.sv --
+
+    1                                                class alu_subscriber extends uvm_subscriber #(alu_sequence_item);
+    2               1                    ***0***         `uvm_component_utils(alu_subscriber)
+    2               2                    ***0***     
+    2               3                    ***0***     
+    3                                                    alu_sequence_item item;
+    4                                                
+    5                                                    covergroup cg;
+    6                                                        option.per_instance = 1;                                       // coverage is per instance
+    7                                                        result : coverpoint item.result{
+    8                                                            bins bin_1[] = {0, 255};                                   // coverage of values 0 and 255
+    9                                                        }
+    10                                                       cout : coverpoint item.cout{
+    11                                                           bins bin_1[] = {0, 1};                                     // coverage of values 0 and 1
+    12                                                       }
+    13                                                   endgroup
+    14                                               
+    15                                                   function void write(alu_sequence_item t);
+    16              1                        149             item = t;
+    17              1                        149             cg.sample();
+    18                                                   endfunction: write 
+    19                                               
+    20                                                   // Constructor
+    21                                                   function new(string name = "alu_subscriber", uvm_component parent);
+    22              1                          1             super.new(name, parent);
+    23              1                    ***0***             `uvm_info("SUB_CLASS", "Constructor!", UVM_HIGH)
+    24              1                          1             cg = new();
+    25                                                   endfunction: new
+    26                                               
+    27                                                   // Build Phase
+    28                                                   function void build_phase(uvm_phase phase);
+    29              1                          1             super.build_phase(phase);
+    30              1                    ***0***             `uvm_info("SUB_CLASS", "Build Phase", UVM_HIGH)
+    31              1                          1             item = alu_sequence_item::type_id::create("item");
+    32                                                   endfunction: build_phase
+    33                                               
+    34                                                   // Connect Phase
+    35                                                   function void connect_phase(uvm_phase phase);
+    36              1                          1             super.connect_phase(phase);
+    37              1                    ***0***             `uvm_info("SUB_CLASS", "Connect Phase", UVM_HIGH)
+    38                                                   endfunction: connect_phase
+    39                                               
+    40                                                   // Run Phase
+    41                                                   task run_phase (uvm_phase phase);
+    42              1                          1             super.run_phase(phase);
+    43              1                    ***0***             `uvm_info("SUB_CLASS", "Run Phase", UVM_HIGH)
+    44                                                   endtask: run_phase
+    45                                               
+    46                                               endclass: alu_subscriber
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         8         4         4      50.0
+
+================================Branch Details================================
+
+Branch Coverage for file subscriber.sv --
+
+------------------------------------IF Branch------------------------------------
+    23                                         1     Count coming in to IF
+    23              1                    ***0***             `uvm_info("SUB_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    30                                         1     Count coming in to IF
+    30              1                    ***0***             `uvm_info("SUB_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    37                                         1     Count coming in to IF
+    37              1                    ***0***             `uvm_info("SUB_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    43                                         1     Count coming in to IF
+    43              1                    ***0***             `uvm_info("SUB_CLASS", "Run Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File subscriber.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: test.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           23        16         7      69.5
+
+================================Statement Details================================
+
+Statement Coverage for file test.sv --
+
+    1                                                class alu_test extends uvm_test;
+    2               1                    ***0***       `uvm_component_utils(alu_test)
+    2               2                    ***0***     
+    2               3                          1     
+    3                                                
+    4                                                  virtual alu_interface vif;
+    5                                                
+    6                                                  alu_env env;
+    7                                                  alu_base_sequence reset_seq;
+    8                                                  alu_test_sequence test_seq;
+    9                                                
+    10                                                 // Constructor
+    11                                                 function new(string name = "alu_test", uvm_component parent);
+    12              1                          1         super.new(name, parent);
+    13              1                    ***0***         `uvm_info("TEST_CLASS", "Constructor!", UVM_HIGH)
+    14                                                 endfunction: new
+    15                                               
+    16                                                 // Build Phase
+    17                                                 function void build_phase(uvm_phase phase);
+    18              1                          1         super.build_phase(phase);
+    19              1                    ***0***         `uvm_info("TEST_CLASS", "Build Phase", UVM_HIGH)
+    20              1                          1         env = alu_env::type_id::create("env", this);
+    21                                                   if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+    22              1                    ***0***           `uvm_error("TEST_CLASS", "Failed to get VIF from config DB! : not set in testbench top level")
+    23              1                          1         uvm_config_db#(virtual alu_interface)::set(this, "env", "vif", vif);
+    24                                                 endfunction: build_phase
+    25                                               
+    26                                                 // Connect Phase
+    27                                                 function void connect_phase(uvm_phase phase);
+    28              1                          1         super.connect_phase(phase);
+    29              1                    ***0***         `uvm_info("TEST_CLASS", "Connect Phase", UVM_HIGH)
+    30                                                 endfunction: connect_phase
+    31                                                 
+    32                                                 // Run Phase
+    33                                                 task run_phase (uvm_phase phase);
+    34              1                          1         super.run_phase(phase);
+    35              1                    ***0***         `uvm_info("TEST_CLASS", "Run Phase", UVM_HIGH)
+    36              1                          1         phase.raise_objection(this);
+    37                                                   //reset_seq
+    38              1                          1         reset_seq = alu_base_sequence::type_id::create("reset_seq");
+    39              1                          1         reset_seq.start(env.agnt.seqr); // specify the sequencer to send the sequence to
+    40              1                          1         #10; // this delay is needed to avoid back-to-back transactions
+    41              1                        100         repeat(100) begin
+    42                                                     //test_seq
+    43              1                        100           test_seq = alu_test_sequence::type_id::create("test_seq");
+    44              1                        100           test_seq.start(env.agnt.seqr);
+    45              1                        100           #10;
+    46                                                   end
+    47              1                          1         phase.drop_objection(this);
+    48                                                 endtask: run_phase
+    49                                               
+    50                                               endclass: alu_test
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                        12         5         7      41.6
+
+================================Branch Details================================
+
+Branch Coverage for file test.sv --
+
+------------------------------------IF Branch------------------------------------
+    13                                         1     Count coming in to IF
+    13              1                    ***0***         `uvm_info("TEST_CLASS", "Constructor!", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    19                                         1     Count coming in to IF
+    19              1                    ***0***         `uvm_info("TEST_CLASS", "Build Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    21                                         1     Count coming in to IF
+    21              1                    ***0***         if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    22                                   ***0***     Count coming in to IF
+    22              1                    ***0***           `uvm_error("TEST_CLASS", "Failed to get VIF from config DB! : not set in testbench top level")
+                                         ***0***     All False Count
+Branch totals: 0 hits of 2 branches = 0.0%
+
+------------------------------------IF Branch------------------------------------
+    29                                         1     Count coming in to IF
+    29              1                    ***0***         `uvm_info("TEST_CLASS", "Connect Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+------------------------------------IF Branch------------------------------------
+    35                                         1     Count coming in to IF
+    35              1                    ***0***         `uvm_info("TEST_CLASS", "Run Phase", UVM_HIGH)
+                                               1     All False Count
+Branch totals: 1 hit of 2 branches = 50.0%
+
+
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      0         0         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File test.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          0 
+Toggled Node Count   =          0 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (0 of 0 bins)
+
+=================================================================================
+=== File: testbench.sv
+=================================================================================
+Statement Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Stmts                           12        10         2      83.3
+
+================================Statement Details================================
+
+Statement Coverage for file testbench.sv --
+
+    1                                                module top;
+    2                                                  import uvm_pkg::*;
+    3                                                  import alu_package::*;
+    4                                                  logic clk;
+    5                                                  alu_interface vif(.clk(clk));
+    6                                                  alu dut(.clk(vif.clk), .reset(vif.reset), .A(vif.a), .B(vif.b), .ALUSel(vif.opCode), .F(vif.result), .cout(vif.cout));
+    7                                                  // Notice the hierarchical path of the signals from the top module, into the interface, and then into the DUT.
+    8                                                
+    9                                                  initial begin
+    10              1                          1         uvm_config_db #(virtual alu_interface)::set(null, "uvm_test_top", "vif", vif);                // Interface Setting
+    11              1                          1         run_test("alu_test");                                                                         // Start the test
+    12                                                 end
+    13                                               
+    14                                                 // Clock Generation
+    15                                                 localparam CLK_PERIOD = 4;
+    16                                                 initial begin
+    17              1                          1         clk = 0;
+    18              1                          1         #(CLK_PERIOD/2);
+    19              1                          1         forever begin
+    20              1                        606           clk = ~clk;
+    21              1                        606           #(CLK_PERIOD/2);
+    22                                                   end
+    23                                                 end
+    24                                               
+    25                                                 // Maximum Simulation Time
+    26                                                 initial begin
+    27              1                          1         #5000;
+    28              1                    ***0***         $display("Sorry! Ran out of clock cycles!");
+    29              1                    ***0***         $finish();
+    30                                                 end
+    31                                                 
+    32                                                 // Generate Waveforms
+    33                                                 initial begin
+    34              1                          1         $dumpfile("d.vcd");
+    35              1                          1         $dumpvars();
+    36                                                 end
+    37                                               
+    38                                               endmodule: top
+
+Branch Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Branches                         0         0         0     100.0
+Condition Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Condition Terms              0         0         0     100.0
+Expression Coverage:
+    Enabled Coverage            Active   Covered    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FEC Expression Terms             0         0         0     100.0
+FSM Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    FSMs                                                       100.0
+        States                       0         0         0     100.0
+        Transitions                  0         0         0     100.0
+Toggle Coverage:
+    Enabled Coverage            Active      Hits    Misses % Covered
+    ----------------            ------      ----    ------ ---------
+    Toggle Bins                      2         2         0     100.0
+
+================================Toggle Details================================
+
+Toggle Coverage for File testbench.sv --
+
+       Line                                   Node      1H->0L      0L->1H  "Coverage"
+--------------------------------------------------------------------------------------
+
+Total Node Count     =          1 
+Toggled Node Count   =          1 
+Untoggled Node Count =          0 
+
+Toggle Coverage      =      100.0% (2 of 2 bins)
+
+COVERGROUP COVERAGE:
+-----------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal    Status               
+                                                                                              
+-----------------------------------------------------------------------------------------------
+ TYPE /alu_package/alu_subscriber/cg                    50.0%        100    Uncovered            
+    covered/total bins:                                     2          4                      
+    missing/total bins:                                     2          4                      
+    % Hit:                                              50.0%        100                      
+    Coverpoint cg::result                               50.0%        100    Uncovered            
+        covered/total bins:                                 1          2                      
+        missing/total bins:                                 1          2                      
+        % Hit:                                          50.0%        100                      
+        bin bin_1[0]                                        4          1    Covered              
+        bin bin_1[255]                                      0          1    ZERO                 
+    Coverpoint cg::cout                                 50.0%        100    Uncovered            
+        covered/total bins:                                 1          2                      
+        missing/total bins:                                 1          2                      
+        % Hit:                                          50.0%        100                      
+        bin bin_1[0]                                      149          1    Covered              
+        bin bin_1[1]                                        0          1    ZERO                 
+ CLASS alu_subscriber
+ Covergroup instance \/alu_package::alu_subscriber::cg  
+                                                        50.0%        100    Uncovered            
+    covered/total bins:                                     2          4                      
+    missing/total bins:                                     2          4                      
+    % Hit:                                              50.0%        100                      
+    Coverpoint result                                   50.0%        100    Uncovered            
+        covered/total bins:                                 1          2                      
+        missing/total bins:                                 1          2                      
+        % Hit:                                          50.0%        100                      
+        bin bin_1[0]                                        4          1    Covered              
+        bin bin_1[255]                                      0          1    ZERO                 
+    Coverpoint cout                                     50.0%        100    Uncovered            
+        covered/total bins:                                 1          2                      
+        missing/total bins:                                 1          2                      
+        % Hit:                                          50.0%        100                      
+        bin bin_1[0]                                      149          1    Covered              
+        bin bin_1[1]                                        0          1    ZERO                 
+
+TOTAL COVERGROUP COVERAGE: 50.0%  COVERGROUP TYPES: 1
+
+Total Coverage By File (code coverage only, filtered view): 63.7%
+
