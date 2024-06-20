@@ -7,3 +7,5 @@ This repo presents a full UVM environment for the verification of a simple ALU u
 
 ## Sample Capture of UVM Reporting
 ![UVM_Reporting_Captures](https://github.com/alhusseingamal/UVM-ALU-verification/blob/main/images/simulation-results-sample-capture.png)
+
+## See the coverage report [here](https://github.com/alhusseingamal/UVM-ALU-verification/blob/main/coverage_report.txt)
