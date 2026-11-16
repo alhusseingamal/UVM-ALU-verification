@@ -1,0 +1,20 @@
+`verilator_config
+
+// Turn off coverage across all UVM library source files
+coverage_off -file "*uvm*"
+
+// Turn off code/toggle coverage across testbench infrastructure
+coverage_off -file "*testbench.sv*"
+coverage_off -file "*driver.sv*"
+coverage_off -file "*monitor.sv*"
+coverage_off -file "*scoreboard.sv*"
+coverage_off -file "*agent.sv*"
+coverage_off -file "*env.sv*"
+coverage_off -file "*test.sv*"
+coverage_off -file "*sequence.sv*"
+coverage_off -file "*sequence_item.sv*"
+coverage_off -file "*sequencer.sv*"
+coverage_off -file "*interface.sv*"
+
+// Built-in std package shipped with the simulator
+coverage_off -file "*verilated_std.sv"

@@ -1,5 +1,8 @@
-// `timescale 1ns/1ns
+`timescale 1ns/1ps
 package alu_package;
+    // note: time unit and time precision could also be defined here (that is the more modern approach)
+    // timeunit 1ns;
+    // timeprecision 1ps;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
 

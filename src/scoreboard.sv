@@ -3,6 +3,8 @@ class alu_scoreboard extends uvm_scoreboard;
   
   uvm_analysis_imp #(alu_sequence_item, alu_scoreboard) scoreboard_port; // port to receive data from monitor
   alu_sequence_item transactions[$]; // variable-size queue to store transactions
+
+  int match_count = 0;
   
   // Constructor
   function new(string name = "alu_scoreboard", uvm_component parent);
@@ -41,18 +43,15 @@ class alu_scoreboard extends uvm_scoreboard;
   endtask: run_phase
   
   // Compare : Generate expected results and compare with actual results
-  task compare(alu_sequence_item curr_trans);
+  function void compare(alu_sequence_item curr_trans);
     logic [8:0] temp;
     logic [15:0] expectedResult;
-    logic [7:0] actualResult;
-    bit expectedCout, actualCout;
-    actualResult = curr_trans.result;                       // sample the actual result
-    actualCout = curr_trans.cout;
+    logic expectedCout;
     
     case(curr_trans.opCode)                           // generate the expected result
       0: begin
         temp = curr_trans.a + curr_trans.b;
-        expectedResult = temp[7:0];
+        expectedResult = {7'b0, temp};
         expectedCout = temp[8];
       end
       1: begin
@@ -67,20 +66,27 @@ class alu_scoreboard extends uvm_scoreboard;
         expectedResult = curr_trans.a / curr_trans.b;
         expectedCout = 1'b0;
       end
+      default: begin
+        expectedResult = 16'h00AC;
+        expectedCout= 1'b0;
+      end
     endcase
     
-    if({8'b0, actualResult} != expectedResult) begin
-      `uvm_error("COMPARE", $sformatf("Transaction failed!\noperandA = %d, operandB = %d, opCode = %d\nactual result = %d, expected result = %d",
-      curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult))
+    if (curr_trans.result !== expectedResult || curr_trans.cout !== expectedCout) begin
+    `uvm_error("COMPARE", $sformatf(
+      "FAIL: op=%0d a=%0d b=%0d | Act: res=%0h cout=%b | Exp: res=%0h cout=%b",
+      curr_trans.opCode, curr_trans.a, curr_trans.b,
+      curr_trans.result, curr_trans.cout, expectedResult, expectedCout))
+    end else begin
+      match_count++;
     end
-    else if (actualCout != expectedCout) begin
-      `uvm_error("COMPARE", $sformatf("Transaction failed!\noperandA = %d, operandB = %d, opCode = %d\nactual cout = %d, expected cout = %d",
-      curr_trans.a, curr_trans.b, curr_trans.opCode, actualCout, expectedCout))
-    end
-    else begin
-      `uvm_info("COMPARE", $sformatf("Transaction Passed!\nnoperandA = %d, operandB = %d, opCode = %d\nactual result = %d, expected result = %d\nactual cout = %d, expected cout = %d",
-      curr_trans.a, curr_trans.b, curr_trans.opCode, actualResult, expectedResult, actualCout, expectedCout), UVM_LOW)
-    end
-  endtask: compare
+
+  endfunction: compare
+
+
+  function void report_phase(uvm_phase phase);
+    super.report_phase(phase);
+    `uvm_info("SCB", $sformatf("--- SCOREBOARD SUMMARY: %0d transactions verified successfully ---", match_count), UVM_NONE)
+  endfunction: report_phase
   
 endclass: alu_scoreboard

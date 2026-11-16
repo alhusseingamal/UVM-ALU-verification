@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+`include "definitions.sv"
 module top;
   import uvm_pkg::*;
   import alu_package::*;
@@ -12,13 +14,12 @@ module top;
   end
 
   // Clock Generation
-  localparam CLK_PERIOD = 4;
   initial begin
     clk = 0;
-    #(CLK_PERIOD/2);
+    #(`CLK_PERIOD/2);
     forever begin
       clk = ~clk;
-      #(CLK_PERIOD/2);
+      #(`CLK_PERIOD/2);
     end
   end
 

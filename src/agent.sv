@@ -17,21 +17,31 @@ class alu_agent extends uvm_agent;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("AGENT_CLASS", "Build Phase", UVM_HIGH)
-    seqr = alu_sequencer::type_id::create("seqr", this);
-    drv = alu_driver::type_id::create("drv", this);
-    mon = alu_monitor::type_id::create("mon", this);
 
     if(!uvm_config_db#(virtual alu_interface)::get(this, "", "vif", vif))
       `uvm_error("AGENT_CLASS", "Failed to get VIF from config DB! : not set in ENV_CLASS")
-    uvm_config_db#(virtual alu_interface)::set(this, "drv", "vif", vif);
+    
+    mon = alu_monitor::type_id::create("mon", this);
     uvm_config_db#(virtual alu_interface)::set(this, "mon", "vif", vif);
+    
+    // A main goal of UVM is Reusability.
+    // For reusing the agent as a passive monitor in another testbench, we don't need the sequencer and driver
+    // So, we only create and connect them when the agent is active
+    // The monitor, handled above, is used in both modes (active or passive), so it remains unconditional.
+    if (get_is_active() == UVM_ACTIVE) begin
+      seqr = alu_sequencer::type_id::create("seqr", this);
+      drv = alu_driver::type_id::create("drv", this);
+      uvm_config_db#(virtual alu_interface)::set(this, "drv", "vif", vif);
+    end
   endfunction: build_phase
 
   // Connect Phase
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("AGENT_CLASS", "Connect Phase", UVM_HIGH)
-    drv.seq_item_port.connect(seqr.seq_item_export); // seq_item_port is a TLM port defined by default
+    if (get_is_active() == UVM_ACTIVE) begin
+      drv.seq_item_port.connect(seqr.seq_item_export); // seq_item_port is a TLM port defined by default
+    end
   endfunction: connect_phase
 
   // Run Phase

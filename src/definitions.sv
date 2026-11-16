@@ -1,0 +1,8 @@
+`ifndef DEFINITIONS_SV
+`define DEFINITIONS_SV
+
+`define CLK_PERIOD 4
+`define DRIVER_SKEW 1
+`define MONITOR_SKEW 1
+
+`endif // DEFINITIONS_SV
