@@ -34,8 +34,8 @@ class alu_monitor extends uvm_monitor;
       @(vif.mon_cb);
 
       // if reset is active, flush the pipeline
-      // note: anything other than 1'b1 (1'b0, 1'bx, 1'bz) is regarded as active reset. This handled the unknown reset values at the start of simulation.
-      if(vif.mon_cb.reset !== 1'b0) begin  // explictly require reset to be 0 (And not just == 1'b1) to avoid problems when 1'bx is 1'bx
+      // note: anything other than 1'b0 (1'b1, 1'bx, 1'bz) is regarded as active reset. This handled the unknown reset values at the start of simulation.
+      if(vif.mon_cb.reset !== 1'b0) begin
         pending_item = null;
         continue;
       end

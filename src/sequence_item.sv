@@ -13,8 +13,12 @@ class alu_sequence_item extends uvm_sequence_item;
   // Required Constraints
   // Soft constraints allow directed sequences to override without constraint_mode(0)
   constraint div_by_zero_c { (opCode == 4'd3) -> (b != 8'd0); }
+
   constraint valid_op_c {soft opCode inside {[0:3]};}
-  constraint a_ge_b_c {a >= b;}
+  // - note: this is a soft constraint; it can be overriden in case of conflict with 
+  // a higher priority inline constraint like the one in alu_illegal_op_sequence
+  // - note: if two hard constraints (constraints are hard by default; 'soft' is not specified), 
+  // randomization fails, and UVM returns a fatal error
   
   // Constructor
   function new(string name = "alu_sequence_item");

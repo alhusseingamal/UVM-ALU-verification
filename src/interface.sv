@@ -7,8 +7,10 @@ interface alu_interface(input logic clk);
   logic [7:0] a, b;
   logic [3:0] opCode;
   logic [15:0] result;
-  logic cout; // bit type masks X/Z states to 0, so logic is necessary
+  logic cout; // bit type masks X/Z states to 0, potentially hiding real silicon defects, so logic type is necessary
 
+  // Clocking Blocks act like a physical chip's setup and hold specification, 
+  // eliminating common race conditions between the testbench and the DUT.
 
   // Driver drives its outputs DRIVER_SKEW after posedge clk
   clocking drv_cb @(posedge clk);

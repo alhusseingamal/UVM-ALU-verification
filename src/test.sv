@@ -6,7 +6,7 @@ class alu_test extends uvm_test;
   alu_env env;
 
   // Sequences
-  alu_base_sequence reset_seq, mid_reset_seq;
+  alu_reset_sequence reset_seq, mid_reset_seq;
   alu_test_sequence test_seq;
   alu_illegal_op_sequence illegal_seq;
   alu_corner_sequence corner_seq;
@@ -41,12 +41,10 @@ class alu_test extends uvm_test;
 
     // once all sequences drop their objections, let the clock run for 20 time units
     // so the final transaction has enough time to exit the pipeline and get checked by scoreboard
-    // Note: this line onfigures what UVM should do when the objection is dropped; 
+    // Note: this line configures what UVM should do when the objection is dropped; 
     //        it does not start the delay at the point where it is called.
-    // This is the old way to do it, which is not supported by my version of verilator
-    // so, for now, I resort to the less preferred method of #20ns at the end of run_phase
-
-    // phase.phase_done.set_drain_time(this, 20);
+    // This is the new standard way to do it in contrast to the less preferred method of #20ns at the end of run_phase
+    // or the deprecated phase.phase_done.set_drain_time(this, 20);
 
     objection = phase.get_objection();
     if (objection != null) begin
@@ -55,11 +53,14 @@ class alu_test extends uvm_test;
 
     phase.raise_objection(this);
 
+    // note: the task in format sequence.start(sequencer) is a blocking task that doesn't 
+    // return until the sequence's body() finishes driving all its items.
+
     // reset_seq: assert reset for 2 clock cycles (the 2 defined in sequence.sv for reset sequence)
-    reset_seq = alu_base_sequence::type_id::create("reset_seq");
+    reset_seq = alu_reset_sequence::type_id::create("reset_seq");
     reset_seq.start(env.agnt.seqr); // specify the sequencer to send the sequence to
 
-    // corner_seq: a curated set of vector that trigger each bit toggle (0->1 and 1->0) in A,B, ALUSel, F, ALUResult, tmp and cout
+    // corner_seq: a curated set of vectors that aims to trigger each bit toggle (0->1 and 1->0) in A,B, ALUSel, F, ALUResult, tmp and cout
     // without this, many edge cases are never triggered by test_seq
     corner_seq = alu_corner_sequence::type_id::create("corner_seq");
     corner_seq.start(env.agnt.seqr);
@@ -69,7 +70,7 @@ class alu_test extends uvm_test;
     test_seq.start(env.agnt.seqr);
 
     // mid_reset_seq: mid-run reset check to ensure reset toggles
-    mid_reset_seq = alu_base_sequence::type_id::create("mid_reset_seq");
+    mid_reset_seq = alu_reset_sequence::type_id::create("mid_reset_seq");
     mid_reset_seq.start(env.agnt.seqr);
 
     // illegal_seq: drive reserved opcodes
@@ -77,7 +78,7 @@ class alu_test extends uvm_test;
     illegal_seq.start(env.agnt.seqr);
 
     // Allow the last transaction to complete pipeline stages and reach scoreboard
-    // #20ns;  // I think there are better way to do this, but it works for now (20ns is hardcoded and design-dependent)
+    // #20ns;  // OLD method: left for illustration
 
     phase.drop_objection(this);
   endtask: run_phase

@@ -39,8 +39,8 @@ Code coverage on the RTL (`src/design.sv`) and functional coverage in the subscr
 
 | Metric | Coverage | Details |
 | :--- | :--- | :--- |
-| **Line Coverage** | 100.0% | 7/7 Verilator points (42/42 LCOV annotated lines) |
-| **Branch Coverage** | 100.0% | 4/4 Verilator branches (135/135 LCOV branches) |
+| **Line Coverage** | 100.0% | 7/7 Verilator points (47/47 LCOV annotated lines) |
+| **Branch Coverage** | 100.0% | 4/4 Verilator branches (150/150 LCOV branches) |
 | **Toggle Coverage** | 100.0% | 128/128 bits |
 | **Expression Coverage** | 100.0% | 2/2 expressions |
-| **Functional Covergroup (`cg`)** | 100.0% | 19/19 bins (`op_cp`, `a_cp`, `b_cp`, `result_cp`, `cout_cp`) |
+| **Functional Covergroup (`cg`)** | 100.0% | 38/38 bins (`op_cp`, `rel_cp`, `op_x_rel`, `a_cp`, `b_cp`, `result_cp`, `cout_cp`) |

@@ -5,6 +5,7 @@ class alu_scoreboard extends uvm_scoreboard;
   alu_sequence_item transactions[$]; // variable-size queue to store transactions
 
   int match_count = 0;
+  int mismatch_count = 0;
   
   // Constructor
   function new(string name = "alu_scoreboard", uvm_component parent);
@@ -55,7 +56,7 @@ class alu_scoreboard extends uvm_scoreboard;
         expectedCout = temp[8];
       end
       1: begin
-        expectedResult = curr_trans.a - curr_trans.b;
+        expectedResult = 16'(curr_trans.a) - 16'(curr_trans.b);
         expectedCout = 1'b0;
       end
       2: begin
@@ -77,6 +78,7 @@ class alu_scoreboard extends uvm_scoreboard;
       "FAIL: op=%0d a=%0d b=%0d | Act: res=%0h cout=%b | Exp: res=%0h cout=%b",
       curr_trans.opCode, curr_trans.a, curr_trans.b,
       curr_trans.result, curr_trans.cout, expectedResult, expectedCout))
+      mismatch_count++;
     end else begin
       match_count++;
     end
@@ -86,7 +88,21 @@ class alu_scoreboard extends uvm_scoreboard;
 
   function void report_phase(uvm_phase phase);
     super.report_phase(phase);
-    `uvm_info("SCB", $sformatf("--- SCOREBOARD SUMMARY: %0d transactions verified successfully ---", match_count), UVM_NONE)
+    `uvm_info("SCB", $sformatf("--- SCOREBOARD SUMMARY: %0d transactions verified successfully, %0d transactions failed ---", match_count, mismatch_count), UVM_NONE)
   endfunction: report_phase
+
+  function void check_phase(uvm_phase phase);
+    super.check_phase(phase);
+
+    if (transactions.size() != 0) begin
+      `uvm_error("SCB", $sformatf(
+        "Queue not drained: %0d transactions remain unprocessed",
+        transactions.size()))
+    end
+
+    if (match_count == 0) begin
+      `uvm_error("SCB", "No transactions were verified successfully")
+    end
+  endfunction: check_phase
   
 endclass: alu_scoreboard

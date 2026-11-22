@@ -15,6 +15,16 @@ class alu_subscriber extends uvm_subscriber #(alu_sequence_item);
       bins illegal = {[4'd4:4'd15]};
     }
 
+    rel_cp: coverpoint (item.a < item.b ? 2'd0 : (item.a == item.b ? 2'd1 : 2'd2)) {
+      bins a_lt_b = {2'd0};
+      bins a_eq_b = {2'd1};
+      bins a_gt_b = {2'd2};
+    }
+
+    op_x_rel: cross op_cp, rel_cp {
+      ignore_bins ignore_illegal = binsof(op_cp.illegal);
+    }
+
     a_cp: coverpoint item.a {
       bins zero = {8'd0};
       bins mid  = {[8'd1:8'd254]};
@@ -34,6 +44,7 @@ class alu_subscriber extends uvm_subscriber #(alu_sequence_item);
       bins bad_op    = {16'h00AC};
       bins high_res  = {[16'd256:16'hFE00]};
       bins max_mul   = {16'hFE01};
+      bins sub_underflow = {[16'hFF01:16'hFFFF]};
     }
 
     cout_cp: coverpoint item.cout {
